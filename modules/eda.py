@@ -21,9 +21,10 @@ import streamlit as st
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 
-def render_eda(df_filtered: "pd.DataFrame") -> None:
+def render_eda(df_filtered: pd.DataFrame) -> None:
     """Renders all five EDA tabs for the given (filtered) DataFrame."""
 
     st.markdown("### Exploratory Data Analysis")
