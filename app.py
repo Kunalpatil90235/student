@@ -230,22 +230,38 @@ elif app_mode == "Exploratory Data Analysis":
         EDA means exploring the data visually before building any model.
         We look at how scores are spread, whether certain groups score better,
         and which features are correlated with each other.
+        All charts are based on the filtered data you selected in the sidebar.
         """)
 
-    tab1, tab2, tab3 = st.tabs(["Score Distributions", "Group Comparisons", "Correlation Analysis"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "Score Distributions",
+        "Group Comparisons",
+        "Subject Breakdown",
+        "Categorical Counts",
+        "Correlation Analysis"
+    ])
 
-    # --- Tab 1: Distributions ---
+    # --- Tab 1: Score Distributions ---
     with tab1:
         c1, c2, c3 = st.columns(3)
         with c1:
-            fig = px.histogram(df_filtered, x="math_score",    nbins=30, title="Math Score",    color_discrete_sequence=['#ff4081'])
+            fig = px.histogram(df_filtered, x="math_score", nbins=30, title="Math Score Distribution",
+                               color_discrete_sequence=['#ff4081'])
             st.plotly_chart(fig, use_container_width=True)
         with c2:
-            fig = px.histogram(df_filtered, x="reading_score", nbins=30, title="Reading Score", color_discrete_sequence=['#f50057'])
+            fig = px.histogram(df_filtered, x="reading_score", nbins=30, title="Reading Score Distribution",
+                               color_discrete_sequence=['#f50057'])
             st.plotly_chart(fig, use_container_width=True)
         with c3:
-            fig = px.histogram(df_filtered, x="writing_score", nbins=30, title="Writing Score", color_discrete_sequence=['#c51162'])
+            fig = px.histogram(df_filtered, x="writing_score", nbins=30, title="Writing Score Distribution",
+                               color_discrete_sequence=['#c51162'])
             st.plotly_chart(fig, use_container_width=True)
+
+        # Average score distribution
+        fig = px.histogram(df_filtered, x="average_score", nbins=30,
+                           title="Overall Average Score Distribution",
+                           color_discrete_sequence=['#ad1457'], marginal="box")
+        st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("#### Summary Statistics")
         st.dataframe(
@@ -253,10 +269,12 @@ elif app_mode == "Exploratory Data Analysis":
             use_container_width=True
         )
 
-    # --- Tab 2: Group Comparisons ---
+    # --- Tab 2: Group Comparisons (Box / Violin) ---
     with tab2:
         col1, col2 = st.columns([1, 1])
-        group_col  = col1.selectbox("Group students by:", ['gender', 'test_preparation_course', 'race_ethnicity', 'parental_level_of_education'])
+        group_col  = col1.selectbox("Group students by:", [
+            'gender', 'test_preparation_course', 'race_ethnicity', 'parental_level_of_education'
+        ])
         plot_style = col2.radio("Chart type:", ["Box Plot", "Violin Plot"])
 
         if plot_style == "Box Plot":
@@ -268,14 +286,73 @@ elif app_mode == "Exploratory Data Analysis":
                             title=f"Score Density by {group_col.replace('_', ' ').title()}")
         st.plotly_chart(fig, use_container_width=True)
 
-        # Average per group in a table as well
+        # Group mean table
         grp_avg = df_filtered.groupby(group_col)['average_score'].mean().reset_index()
         grp_avg.columns = [group_col.replace('_', ' ').title(), 'Mean Average Score']
         grp_avg['Mean Average Score'] = grp_avg['Mean Average Score'].round(2)
         st.dataframe(grp_avg, use_container_width=True)
 
-    # --- Tab 3: Correlations ---
+    # --- Tab 3: Subject-Wise Breakdown by Group ---
     with tab3:
+        st.markdown("Compare individual subject scores across a demographic group.")
+        subj_group = st.selectbox("Select group:", [
+            'gender', 'test_preparation_course', 'race_ethnicity', 'parental_level_of_education'
+        ], key="subj_group")
+
+        # Melt to long format for grouped bar
+        subj_df = (df_filtered
+                   .groupby(subj_group)[['math_score', 'reading_score', 'writing_score']]
+                   .mean().reset_index()
+                   .melt(id_vars=subj_group, var_name='Subject', value_name='Mean Score'))
+
+        fig = px.bar(subj_df, x=subj_group, y='Mean Score', color='Subject', barmode='group',
+                     title=f"Mean Subject Scores by {subj_group.replace('_', ' ').title()}",
+                     color_discrete_sequence=['#f06292', '#ce93d8', '#80deea'])
+        st.plotly_chart(fig, use_container_width=True)
+
+        # Stacked % pass/fail by group
+        st.markdown("#### Pass / Fail Rate by Group")
+        pass_df = (df_filtered
+                   .groupby([subj_group, 'academic_status'])
+                   .size().reset_index(name='Count'))
+        fig = px.bar(pass_df, x=subj_group, y='Count', color='academic_status', barmode='stack',
+                     title=f"Pass / Fail Count by {subj_group.replace('_', ' ').title()}",
+                     color_discrete_map={'Pass': '#f06292', 'Fail': '#880e4f'})
+        st.plotly_chart(fig, use_container_width=True)
+
+    # --- Tab 4: Categorical Counts & Proportions ---
+    with tab4:
+        st.markdown("Understand the composition of the dataset across demographic categories.")
+
+        cat_col = st.selectbox("Select category:", [
+            'gender', 'race_ethnicity', 'parental_level_of_education', 'test_preparation_course'
+        ], key="cat_col")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            count_df = df_filtered[cat_col].value_counts().reset_index()
+            count_df.columns = [cat_col.replace('_', ' ').title(), 'Count']
+            fig = px.bar(count_df, x=cat_col.replace('_', ' ').title(), y='Count',
+                         title=f"Student Count by {cat_col.replace('_', ' ').title()}",
+                         color='Count', color_continuous_scale='RdPu')
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col2:
+            fig = px.pie(df_filtered, names=cat_col,
+                         title=f"Proportion — {cat_col.replace('_', ' ').title()}",
+                         color_discrete_sequence=px.colors.sequential.RdPu)
+            st.plotly_chart(fig, use_container_width=True)
+
+        # Avg score across 2 categories combined
+        st.markdown("#### Average Score: Gender vs Test Preparation")
+        combo = df_filtered.groupby(['gender', 'test_preparation_course'])['average_score'].mean().reset_index()
+        fig = px.bar(combo, x='gender', y='average_score', color='test_preparation_course',
+                     barmode='group', title="Average Score: Gender split by Test Preparation",
+                     color_discrete_sequence=['#f06292', '#880e4f'])
+        st.plotly_chart(fig, use_container_width=True)
+
+    # --- Tab 5: Correlation Analysis ---
+    with tab5:
         col1, col2 = st.columns(2)
         with col1:
             corr = df_filtered[['math_score', 'reading_score', 'writing_score', 'average_score']].corr()
@@ -285,10 +362,19 @@ elif app_mode == "Exploratory Data Analysis":
             st.pyplot(fig)
 
         with col2:
-            fig = px.scatter(df_filtered, x="reading_score", y="writing_score", color="math_score",
-                             title="Reading vs Writing (colour = Math Score)",
+            fig = px.scatter(df_filtered, x="reading_score", y="writing_score",
+                             color="math_score",
+                             title="Reading vs Writing Score (colour = Math Score)",
                              opacity=0.7, color_continuous_scale='RdPu')
             st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("#### Math vs Average Score by Gender")
+        fig = px.scatter(df_filtered, x="math_score", y="average_score", color="gender",
+                         trendline="ols",
+                         title="Math Score vs Average Score (with Trend Line)",
+                         color_discrete_map={'male': '#f06292', 'female': '#880e4f'})
+        st.plotly_chart(fig, use_container_width=True)
+
 
 
 # ============================================================
