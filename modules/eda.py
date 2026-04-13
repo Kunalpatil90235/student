@@ -189,3 +189,28 @@ def render_eda(df_filtered: pd.DataFrame) -> None:
                          title="Math Score vs Average Score",
                          color_discrete_map={"male": "#38bdf8", "female": "#f472b6"})
         st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("---")
+        st.markdown("#### Additional Scatter Relationships")
+        col3, col4 = st.columns(2)
+        with col3:
+            fig2 = px.scatter(df_filtered, x="math_score", y="reading_score",
+                              color="test_preparation_course",
+                              title="Math vs Reading (by Test Prep)",
+                              color_discrete_sequence=["#f472b6", "#34d399"])
+            st.plotly_chart(fig2, use_container_width=True)
+            
+        with col4:
+            fig3 = px.scatter(df_filtered, x="math_score", y="writing_score",
+                              color="parental_level_of_education",
+                              title="Math vs Writing (by Parental Education)",
+                              color_discrete_sequence=px.colors.qualitative.Pastel)
+            st.plotly_chart(fig3, use_container_width=True)
+            
+        st.markdown("#### Scatter Matrix (All Subject Scores)")
+        fig4 = px.scatter_matrix(df_filtered, dimensions=["math_score", "reading_score", "writing_score"],
+                                 color="academic_status",
+                                 title="Score Correlation Matrix",
+                                 color_discrete_map={"Pass": "#34d399", "Fail": "#f87171"})
+        fig4.update_traces(diagonal_visible=False)
+        st.plotly_chart(fig4, use_container_width=True)
