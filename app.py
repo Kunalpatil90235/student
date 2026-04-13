@@ -54,7 +54,7 @@ div[data-testid="metric-container"] {
 
 /* Hero banner */
 .main-banner {
-    background: linear-gradient(135deg, #0f172a 0%, #1e40af 60%, #0369a1 100%);
+    background-color: #1e293b;
     color: white;
     padding: 28px 32px;
     border-radius: 10px;

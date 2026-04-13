@@ -83,15 +83,8 @@ def render_eda(df_filtered: "pd.DataFrame") -> None:
             "gender", "test_preparation_course",
             "race_ethnicity", "parental_level_of_education",
         ], key="grp_cmp")
-        plot_style = col2.radio("Chart type:", ["Box Plot", "Violin Plot"], key="grp_style")
-
-        if plot_style == "Box Plot":
-            fig = px.box(df_filtered, x=group_col, y="average_score", color=group_col,
-                         title=f"Average Score by {group_col.replace('_', ' ').title()}")
-        else:
-            fig = px.violin(df_filtered, x=group_col, y="average_score", color=group_col,
-                            box=True, points="all",
-                            title=f"Score Density by {group_col.replace('_', ' ').title()}")
+        fig = px.box(df_filtered, x=group_col, y="average_score", color=group_col,
+                     title=f"Average Score by {group_col.replace('_', ' ').title()}")
         st.plotly_chart(fig, use_container_width=True)
 
         grp_avg = (df_filtered.groupby(group_col)["average_score"]
@@ -189,9 +182,9 @@ def render_eda(df_filtered: "pd.DataFrame") -> None:
                              opacity=0.7, color_continuous_scale="Blues")
             st.plotly_chart(fig, use_container_width=True)
 
-        st.markdown("#### Math vs Average Score by Gender (with Trend Line)")
+        st.markdown("#### Math vs Average Score by Gender")
         fig = px.scatter(df_filtered, x="math_score", y="average_score",
-                         color="gender", trendline="ols",
+                         color="gender",
                          title="Math Score vs Average Score",
                          color_discrete_map={"male": "#38bdf8", "female": "#f472b6"})
         st.plotly_chart(fig, use_container_width=True)
