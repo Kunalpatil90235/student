@@ -28,7 +28,8 @@
 * **K-Means Clustering:** The core Unsupervised ML algorithm used to group students into 3 performance profiles (At-Risk, Average, High Performer) based strictly on data patterns, rather than pre-defined labels.
 * **The Elbow Method (WCSS):** Used to mathematically validate that K=3 is the optimal number of groups for this dataset.
 * **Principal Component Analysis (PCA):** A dimensionality reduction technique used to compress 3D scores into 2D, allowing us to visually prove that the clusters are well-separated.
-* **StandardScaler & LabelEncoder:** Crucial for standardizing numerical data and converting text demographics into ML-readable formats.
+* **LabelEncoder (The Translator):** Machines can't read words like "Male" or "Completed." We use this to turn words into numbers (IDs) so the model can process them.
+* **StandardScaler (The Fairness Rule):** Exam scores are big (0-100) and other factors are small (0-1). We use this to put all data on a "fair scale" so the model treats every factor as equally important.
 
 ---
 

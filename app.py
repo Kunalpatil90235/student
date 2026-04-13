@@ -30,7 +30,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Global CSS (dark blue professional theme) ─────────────────────────
+# ── Global CSS (light pink professional theme) ─────────────────────────
 st.markdown("""
 <style>
 /* Remove default Streamlit top padding */
@@ -38,49 +38,49 @@ st.markdown("""
 
 /* Headings */
 h1, h2, h3, h4 {
-    color: #38bdf8;
+    color: #e91e63;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 600;
 }
 
 /* Metric cards */
 div[data-testid="metric-container"] {
-    background-color: #1e293b;
-    border: 1px solid #334155;
+    background-color: #fce4ec;
+    border: 1px solid #f8bbd0;
     padding: 14px;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 /* Hero banner */
 .main-banner {
-    background-color: #1e293b;
-    color: white;
+    background-color: #fce4ec;
+    color: #880e4f;
     padding: 28px 32px;
     border-radius: 10px;
     margin-bottom: 24px;
-    border: 1px solid #1e40af;
-    box-shadow: 0 4px 20px rgba(56,189,248,0.15);
+    border: 1px solid #f48fb1;
+    box-shadow: 0 4px 20px rgba(233,30,99,0.15);
 }
-.main-banner h1 { color: #38bdf8 !important; margin: 0; font-size: 2.1rem; }
-.main-banner p  { margin: 6px 0 0 0; color: #94a3b8; font-size: 1.05rem; }
+.main-banner h1 { color: #e91e63 !important; margin: 0; font-size: 2.1rem; }
+.main-banner p  { margin: 6px 0 0 0; color: #880e4f; font-size: 1.05rem; }
 
 /* Tabs */
 button[data-baseweb="tab"] {
     font-weight: 500;
-    color: #94a3b8 !important;
+    color: #880e4f !important;
 }
 button[data-baseweb="tab"][aria-selected="true"] {
-    color: #38bdf8 !important;
-    border-bottom: 2px solid #38bdf8 !important;
+    color: #e91e63 !important;
+    border-bottom: 2px solid #e91e63 !important;
 }
 
 /* Expanders */
-details summary { color: #38bdf8; }
+details summary { color: #e91e63; }
 
 /* Sidebar */
 .css-1d391kg, section[data-testid="stSidebar"] > div {
-    background-color: #0f172a !important;
+    background-color: #ffffff !important;
 }
 </style>
 """, unsafe_allow_html=True)

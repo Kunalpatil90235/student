@@ -50,24 +50,24 @@ def render_eda(df_filtered: pd.DataFrame) -> None:
         with c1:
             fig = px.histogram(df_filtered, x="math_score", nbins=30,
                                title="Math Score Distribution",
-                               color_discrete_sequence=["#38bdf8"])
+                               color_discrete_sequence=["#e91e63"])
             st.plotly_chart(fig, use_container_width=True)
         with c2:
             fig = px.histogram(df_filtered, x="reading_score", nbins=30,
                                title="Reading Score Distribution",
-                               color_discrete_sequence=["#818cf8"])
+                               color_discrete_sequence=["#f06292"])
             st.plotly_chart(fig, use_container_width=True)
         with c3:
             fig = px.histogram(df_filtered, x="writing_score", nbins=30,
                                title="Writing Score Distribution",
-                               color_discrete_sequence=["#34d399"])
+                               color_discrete_sequence=["#f48fb1"])
             st.plotly_chart(fig, use_container_width=True)
 
         # Average score with a box plot in the margin
         fig = px.histogram(df_filtered, x="average_score", nbins=30,
                            title="Overall Average Score Distribution",
                            marginal="box",
-                           color_discrete_sequence=["#f472b6"])
+                           color_discrete_sequence=["#c2185b"])
         st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("#### Descriptive Statistics")
@@ -113,7 +113,7 @@ def render_eda(df_filtered: pd.DataFrame) -> None:
         fig = px.bar(subj_df, x=subj_group, y="Mean Score", color="Subject",
                      barmode="group",
                      title=f"Mean Subject Scores by {subj_group.replace('_', ' ').title()}",
-                     color_discrete_sequence=["#38bdf8", "#818cf8", "#34d399"])
+                     color_discrete_sequence=["#e91e63", "#f06292", "#f48fb1"])
         st.plotly_chart(fig, use_container_width=True)
 
         # Stacked Pass / Fail bar per group
@@ -141,12 +141,12 @@ def render_eda(df_filtered: pd.DataFrame) -> None:
             count_df.columns = [cat_col.replace("_", " ").title(), "Count"]
             fig = px.bar(count_df, x=cat_col.replace("_", " ").title(), y="Count",
                          title=f"Student Count by {cat_col.replace('_', ' ').title()}",
-                         color="Count", color_continuous_scale="Blues")
+                         color="Count", color_continuous_scale="RdPu")
             st.plotly_chart(fig, use_container_width=True)
         with col2:
             fig = px.pie(df_filtered, names=cat_col,
                          title=f"Proportion — {cat_col.replace('_', ' ').title()}",
-                         color_discrete_sequence=px.colors.sequential.Blues_r)
+                         color_discrete_sequence=px.colors.sequential.RdPu_r)
             st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("#### Average Score: Gender × Test Preparation")
@@ -156,7 +156,7 @@ def render_eda(df_filtered: pd.DataFrame) -> None:
         fig = px.bar(combo, x="gender", y="average_score",
                      color="test_preparation_course", barmode="group",
                      title="Average Score by Gender and Test Preparation Status",
-                     color_discrete_sequence=["#38bdf8", "#818cf8"])
+                     color_discrete_sequence=["#e91e63", "#f48fb1"])
         st.plotly_chart(fig, use_container_width=True)
 
     # ── Tab 5 · Correlation Analysis ────────────────────────────────────
@@ -167,27 +167,27 @@ def render_eda(df_filtered: pd.DataFrame) -> None:
                 ["math_score", "reading_score", "writing_score", "average_score"]
             ].corr()
             fig_h, ax = plt.subplots(figsize=(6, 5))
-            fig_h.patch.set_facecolor("#1e293b")
-            ax.set_facecolor("#1e293b")
-            sns.heatmap(corr, annot=True, cmap="Blues", fmt=".2f",
+            fig_h.patch.set_facecolor("#ffffff")
+            ax.set_facecolor("#ffffff")
+            sns.heatmap(corr, annot=True, cmap="RdPu", fmt=".2f",
                         ax=ax, linewidths=0.5,
-                        annot_kws={"color": "white"})
-            ax.tick_params(colors="white")
-            ax.set_title("Pearson Correlation Matrix", color="white")
+                        annot_kws={"color": "black"})
+            ax.tick_params(colors="black")
+            ax.set_title("Pearson Correlation Matrix", color="black")
             st.pyplot(fig_h)
 
         with col2:
             fig = px.scatter(df_filtered, x="reading_score", y="writing_score",
                              color="math_score",
                              title="Reading vs Writing (colour = Math Score)",
-                             opacity=0.7, color_continuous_scale="Blues")
+                             opacity=0.7, color_continuous_scale="RdPu")
             st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("#### Math vs Average Score by Gender")
         fig = px.scatter(df_filtered, x="math_score", y="average_score",
                          color="gender",
                          title="Math Score vs Average Score",
-                         color_discrete_map={"male": "#38bdf8", "female": "#f472b6"})
+                         color_discrete_map={"male": "#e91e63", "female": "#f8bbd0"})
         st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("---")
